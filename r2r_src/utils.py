@@ -3,7 +3,7 @@
 import os
 import sys
 import re
-sys.path.append('Matterport_Simulator/build/')
+sys.path.append('/root/mount/Matterport3DSimulator/build/')
 import MatterSim
 import string
 import json
@@ -14,6 +14,7 @@ import numpy as np
 import networkx as nx
 from param import args
 from numpy.linalg import norm
+import pudb
 
 
 # padding, unknown word, end of sentence
@@ -348,7 +349,7 @@ def new_simulator():
     sim.setCameraResolution(WIDTH, HEIGHT)
     sim.setCameraVFOV(math.radians(VFOV))
     sim.setDiscretizedViewingAngles(True)
-    sim.init()
+    sim.initialize()
 
     return sim
 
@@ -357,20 +358,24 @@ def get_point_angle_feature(baseViewId=0):
 
     feature = np.empty((36, args.angle_feat_size), np.float32)
     base_heading = (baseViewId % 12) * math.radians(30)
+    # try:
     for ix in range(36):
         if ix == 0:
-            sim.newEpisode('ZMojNkEp431', '2f4d90acd4024c269fb0efe49a8ac540', 0, math.radians(-30))
+                sim.newEpisode(['ZMojNkEp431'], ['2f4d90acd4024c269fb0efe49a8ac540'], [0], [math.radians(-30)])
         elif ix % 12 == 0:
-            sim.makeAction(0, 1.0, 1.0)
+            sim.makeAction([0], [1.0], [1.0])
         else:
-            sim.makeAction(0, 1.0, 0)
+            sim.makeAction([0], [1.0], [0])
 
-        state = sim.getState()
-        assert state.viewIndex == ix
+    state = sim.getState()[0]
+    # pu.db
+    assert state.viewIndex == ix
 
-        heading = state.heading - base_heading
+    heading = state.heading - base_heading
 
-        feature[ix, :] = angle_feature(heading, state.elevation)
+    feature[ix, :] = angle_feature(heading, state.elevation)
+    # except:
+    #     pu.db
     return feature
 
 def get_all_point_angle_feature():

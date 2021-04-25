@@ -23,4 +23,5 @@ flag="--vlnbert prevalent
       --dropout 0.5"
 
 mkdir -p snap/$name
-CUDA_VISIBLE_DEVICES=1 python r2r_src/train.py $flag --name $name
+# CUDA_VISIBLE_DEVICES=1 /root/anaconda3/envs/recurrent-vln-bert/bin/python r2r_src/train.py $flag --name $name
+/root/anaconda3/envs/recurrent-vln-bert/bin/python r2r_src/train.py $flag --name $name
